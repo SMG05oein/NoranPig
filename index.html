@@ -3,24 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>노란돼지</title>
-    <!-- 외부 CSS 파일 참조 -->
+    <title>노란돼지 로그인</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
     <link rel="stylesheet" href="css/q.css">
 </head>
 <body>
 <div class="login-container">
     <h3>로그인</h3>
-    <form action="">
-        <label for="username">이름:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">비밀번호:</label>
-        <input type="password" id="password" name="password" required>
+    <form id="loginForm">
+        <label for="loginEmail">이메일:</label>
+        <input type="email" id="loginEmail" placeholder="이메일" required>
+        <label for="loginPassword">비밀번호:</label>
+        <input type="password" id="loginPassword" placeholder="비밀번호" required>
         <button type="submit">로그인</button>
     </form>
     <div class="signup-link">
         <p>계정이 없으신가요?</p>
-        <a href="sigh_up.html" class="signup-button">회원가입</a>
+        <a href="sign_up.html" class="signup-button">회원가입</a>
     </div>
 </div>
+
+<script>
+    // Firebase 설정
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Firebase 초기화
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // 로그인 처리
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            alert(`${email} 안녕하세요!`);
+            // 로그인 후 홈 페이지로 리디렉션 (선택 사항)
+            window.location.href = 'home.html';
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+</script>
 </body>
 </html>

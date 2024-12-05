@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노란돼지 회원가입</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <link rel="stylesheet" href="css/q.css">
+</head>
+<body>
+<div class="signup-container">
+    <h3>회원가입</h3>
+    <form id="signupForm">
+        <label for="email">이메일:</label>
+        <input type="email" id="email" placeholder="이메일" required>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" placeholder="비밀번호" required>
+        <button type="submit">회원가입</button>
+    </form>
+    <div class="login-link">
+        <p>이미 계정이 있으신가요?</p>
+        <a href="index.html" class="login-button">로그인</a>
+    </div>
+</div>
+
+<script>
+    // Firebase 설정
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Firebase 초기화
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // 회원가입 처리
+    document.getElementById('signupForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            await auth.createUserWithEmailAndPassword(email, password);
+            alert('회원가입 성공');
+            // 회원가입 후 로그인 페이지로 리디렉션 (선택 사항)
+            window.location.href = 'index.html';
+        } catch (error) {
+            alert(error.message);
+        }
+    });
+</script>
+</body>
+</html>
