@@ -4,19 +4,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>노란돼지 회원가입</title>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
     <link rel="stylesheet" href="css/q.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMSxXR7bySxxtMmSkJGVs_wgvieaiASDY",
+            authDomain: "noran-9670b.firebaseapp.com",
+            projectId: "noran-9670b",
+            storageBucket: "noran-9670b.firebasestorage.app",
+            messagingSenderId: "646948244842",
+            appId: "1:646948244842:web:d10e09bb7e4bc621fb2913",
+            measurementId: "G-G460FN0YT2"
+        };
+
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 회원가입 처리
+        document.getElementById("signupForm").addEventListener("submit", async (e) => {
+            console.log("회원가입 버튼 클릭됨");  // 버튼 클릭 확인을 위한 로그 추가
+            e.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                alert("비밀번호가 일치하지 않습니다.");
+                return;
+            }
+
+            try {
+                console.log("Firestore에서 해당 아이디 체크 중...");  // Firestore 문서 조회 전에 로그 추가
+                // Firestore에서 해당 아이디가 있는지 확인
+                const userDocRef = doc(db, "users", username);
+                const docSnap = await getDoc(userDocRef);
+
+                if (docSnap.exists()) {
+                    alert("이미 존재하는 아이디입니다.");
+                    return;
+                }
+
+                console.log("새로운 사용자 Firestore에 저장 중...");  // Firestore 저장 전에 로그 추가
+                // 새로운 사용자를 Firestore에 저장
+                await setDoc(userDocRef, {
+                    name: name,  // 이름 추가
+                    username: username,
+                    password: password // 실제 배포시 비밀번호는 해시 처리해야 합니다.
+                });
+
+                alert("회원가입 성공!");
+                window.location.href = "index.html"; // 로그인 페이지로 이동
+            } catch (error) {
+                alert("회원가입 실패: " + error.message);
+            }
+        });
+    </script>
 </head>
 <body>
 <div class="signup-container">
     <h3>회원가입</h3>
     <form id="signupForm">
-        <label for="email">이메일:</label>
-        <input type="email" id="email" placeholder="이메일" required>
+        <!-- 이름 입력란 -->
+        <label for="name">이름:</label>
+        <input type="text" id="name" required placeholder="이름">
+
+        <!-- 아이디 입력란 -->
+        <label for="username">아이디:</label>
+        <input type="text" id="username" required placeholder="아이디">
+
+        <!-- 비밀번호 입력란 -->
         <label for="password">비밀번호:</label>
-        <input type="password" id="password" placeholder="비밀번호" required>
+        <input type="password" id="password" required placeholder="비밀번호">
+
+        <!-- 비밀번호 확인 입력란 -->
+        <label for="confirmPassword">비밀번호 확인:</label>
+        <input type="password" id="confirmPassword" required placeholder="비밀번호 확인">
+
         <button type="submit">회원가입</button>
     </form>
     <div class="login-link">
@@ -24,38 +92,5 @@
         <a href="index.html" class="login-button">로그인</a>
     </div>
 </div>
-
-<script>
-    // Firebase 설정
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
-
-    // Firebase 초기화
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // 회원가입 처리
-    document.getElementById('signupForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            await auth.createUserWithEmailAndPassword(email, password);
-            alert('회원가입 성공');
-            // 회원가입 후 로그인 페이지로 리디렉션 (선택 사항)
-            window.location.href = 'index.html';
-        } catch (error) {
-            alert(error.message);
-        }
-    });
-</script>
 </body>
 </html>
