@@ -19,7 +19,7 @@
         <button type="submit">로그인</button>
     </form>
     <div class="signup-link">
-        <p>아직 계정이 없으신가요? <a href="sign_up.html" class="signup-button">회원가입</a></p>
+        <p>아직 계정이 없으신가요?</p> <a href="sign_up.html" class="signup-button">회원가입</a>
     </div>
 </div>
 
@@ -50,7 +50,7 @@
         try {
             await signInWithEmailAndPassword(auth, email, password);
             alert('로그인 성공');
-            window.location.href = 'testttt.html?pace=1'; // 로그인 성공 후 홈 페이지로 이동
+            window.location.href = 'main.html?'; // 로그인 성공 후 홈 페이지로 이동
         } catch (error) {
             alert('로그인 실패: ' + error.message);
         }

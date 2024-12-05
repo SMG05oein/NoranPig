@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근무 시간 작성</title>
+    <link rel="stylesheet" href="css/q.css">
+</head>
+<body>
+<div class="work-time-container">
+    <h3>근무 시간 작성</h3>
+    <form id="workTimeForm">
+        <label for="workStart">근무 시작</label>
+        <input type="datetime-local" id="workStart" required>
+
+        <label for="workEnd">근무 종료</label>
+        <input type="datetime-local" id="workEnd" required>
+
+        <button type="submit">근무 시간 저장</button>
+    </form>
+    <button onclick="window.location.href='main.html'">이전</button> <!-- 이전 버튼 -->
+
+    <div id="workHoursList">
+        <h3>내 근무 시간</h3>
+        <ul id="workHours"></ul>
+    </div>
+
+    <div id="totalHours">
+        <h3>총 근무 시간</h3>
+        <p id="calculatedHours">0시간</p>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAMSxXR7bySxxtMmSkJGVs_wgvieaiASDY",
+        authDomain: "noran-9670b.firebaseapp.com",
+        projectId: "noran-9670b",
+        storageBucket: "noran-9670b.firebasestorage.app",
+        messagingSenderId: "646948244842",
+        appId: "1:646948244842:web:d10e09bb7e4bc621fb2913",
+        measurementId: "G-G460FN0YT2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 로그인 상태 확인
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            console.log('로그인 성공:', user.email);
+            loadWorkHours(user.uid); // 사용자의 근무 시간 불러오기
+        } else {
+            window.location.href = 'index.html'; // 로그인되지 않으면 로그인 페이지로 이동
+        }
+    });
+
+    // 근무 시간 저장
+    const workTimeForm = document.getElementById('workTimeForm');
+    workTimeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const workStart = document.getElementById('workStart').value;
+        const workEnd = document.getElementById('workEnd').value;
+        const user = auth.currentUser;
+
+        if (new Date(workStart) >= new Date(workEnd)) {
+            alert('근무 종료 시간이 시작 시간보다 이릅니다.');
+            return;
+        }
+
+        if (user) {
+            try {
+                // Firestore에 데이터 저장
+                await addDoc(collection(db, 'workHours'), {
+                    userId: user.uid,
+                    workStart: workStart,
+                    workEnd: workEnd,
+                    createdAt: new Date()
+                });
+                alert('근무 시간이 저장되었습니다.');
+                loadWorkHours(user.uid); // 저장 후 근무 시간 목록을 새로 고침
+            } catch (error) {
+                alert('근무 시간 저장 실패: ' + error.message);
+            }
+        }
+    });
+
+    // 근무 시간 목록 불러오기
+    async function loadWorkHours(userId) {
+        const workHoursList = document.getElementById('workHours');
+        const calculatedHours = document.getElementById('calculatedHours');
+        workHoursList.innerHTML = ''; // 기존 목록 초기화
+
+        const q = query(collection(db, 'workHours'), where('userId', '==', userId));
+        const querySnapshot = await getDocs(q);
+
+        let totalHours = 0;
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const li = document.createElement('li');
+            li.textContent = `시작: ${data.workStart}, 종료: ${data.workEnd}`;
+            workHoursList.appendChild(li);
+
+            // 근무 시간 계산
+            const startTime = new Date(data.workStart);
+            const endTime = new Date(data.workEnd);
+            const hours = (endTime - startTime) / (1000 * 60 * 60); // 밀리초 -> 시간으로 변환
+            totalHours += hours;
+        });
+
+        // 총 근무 시간 업데이트
+        calculatedHours.textContent = `${totalHours.toFixed(2)}시간`;
+    }
+</script>
+</body>
+</html>
