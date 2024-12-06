@@ -53,12 +53,17 @@
             // 로그인 후 현재 사용자의 이름을 sessionStorage에 저장
             const user = auth.currentUser;
             if (user && user.displayName) {
-                alert(user.displayName +'님, 안녕하세요');
                 sessionStorage.setItem('userName', user.displayName); // 이름 저장
             }
 
-            // 로그인 성공 후 홈 페이지로 이동
-            window.location.href = 'main.html'; // main.html로 이동
+            // 사용자가 'admin'일 경우, admin_main.html로 리디렉션
+            if (user && user.displayName === 'admin' && email === 'admin@gmail.com') {
+                alert('관리자님, 안녕하세요!');
+                window.location.href = 'admin/admin_main.html'; // 관리자 페이지로 이동
+            } else {
+                alert(user.displayName + '님, 안녕하세요!');
+                window.location.href = 'main.html'; // 일반 사용자 페이지로 이동
+            }
         } catch (error) {
             alert('로그인 실패: ' + error.message);
         }
