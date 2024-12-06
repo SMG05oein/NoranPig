@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
-    <link rel="stylesheet" href="css/q.css"> <!-- CSS 파일 연결 -->
+    <title>노란돼지 로그인</title>
+    <link rel="stylesheet" href="css/q.css">
 </head>
 <body>
 <div class="login-container">
@@ -48,15 +48,17 @@
         const password = document.getElementById('password').value;
 
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+            await signInWithEmailAndPassword(auth, email, password);
 
-            // 로그인 후 사용자 이름을 URL에 전달해서 main.html로 이동
-            if (user) {
-                const userName = user.displayName || '사용자';  // 사용자 이름 가져오기, 없으면 '사용자'로 설정
-                alert(userName+'님, 환영합니다.');
-                window.location.href = `main.html?name=${encodeURIComponent(userName)}`;  // 이름을 URL에 포함시켜 전달
+            // 로그인 후 현재 사용자의 이름을 sessionStorage에 저장
+            const user = auth.currentUser;
+            if (user && user.displayName) {
+                alert(user.displayName +'님, 안녕하세요');
+                sessionStorage.setItem('userName', user.displayName); // 이름 저장
             }
+
+            // 로그인 성공 후 홈 페이지로 이동
+            window.location.href = 'main.html'; // main.html로 이동
         } catch (error) {
             alert('로그인 실패: ' + error.message);
         }
