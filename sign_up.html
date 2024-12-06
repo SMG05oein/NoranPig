@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
+    <title>노란돼지 회원가입</title>
     <link rel="stylesheet" href="css/q.css"> <!-- CSS 파일 연결 -->
 </head>
 <body>
 <div class="signup-container">
     <h3>노란돼지 회원가입</h3>
     <form id="signupForm">
+        <label for="name">이름</label>
+        <input type="text" id="name" placeholder="이름을 입력하세요" required>
+
         <label for="email">아이디</label>
         <input type="text" id="email" placeholder="이메일을 입력하세요" required>
 
@@ -29,7 +32,7 @@
 <script type="module">
     // Firebase 초기화 코드
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAMSxXR7bySxxtMmSkJGVs_wgvieaiASDY",
@@ -47,9 +50,12 @@
     const signupForm = document.getElementById('signupForm');
     signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const name = document.getElementById('name').value;
         const email = document.getElementById('email').value + "@gmail.com";
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
+
         // 비밀번호 확인
         if (password !== confirmPassword) {
             alert('비밀번호가 일치하지 않습니다.');
@@ -58,7 +64,14 @@
 
         // Firebase Auth로 회원가입
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // 프로필에 이름을 저장
+            await updateProfile(user, {
+                displayName: name
+            });
+
             alert('회원가입 성공');
             window.location.href = 'index.html'; // 회원가입 후 로그인 페이지로 이동
         } catch (error) {
