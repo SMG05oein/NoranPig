@@ -3,14 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>메인 페이지</title>
+    <title>노란돼지 메인 페이지</title>
     <link rel="stylesheet" href="css/q.css">
 </head>
 <body>
 <div class="main-container">
-    <button onclick="window.location.href='workTime.html'">근무 시간 작성</button>
+    <!-- 유저 이름을 화면에 출력 -->
+    <h2>안녕하세요, <span id="userName"></span>님!</h2>
+
+    <button onclick="window.location.href='workTime.html'">근무시간 작성</button>
     <p>
-    <button onclick="window.location.href='viewWorkHours.html'">근무 시간표 보기</button>
+        <button onclick="window.location.href='viewWorkHours.html'">근무 시간표 보기</button>
 </div>
+
+<script>
+    // URL에서 'name' 쿼리 파라미터 값 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const userName = urlParams.get('name');
+
+    // 'userName' 값이 있으면 화면에 표시
+    if (userName) {
+        document.getElementById('userName').textContent = userName;
+    } else {
+        document.getElementById('userName').textContent = '사용자';
+    }
+</script>
 </body>
 </html>
