@@ -4,26 +4,24 @@ const { google } = require('googleapis');
 const cors = require('cors');
 
 const app = express();
+const PORT = process.env.PORT||3000;
 
-// Render 환경에서 포트 설정
-const PORT = process.env.PORT || 3000;
-
-// Middleware 설정
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
 // Google Sheets API 설정
+const credentials = require('./credentials.json');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-
 const auth = new google.auth.GoogleAuth({
-    credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS),
+    keyFile: './credentials.json',
     scopes: SCOPES,
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
 
-// Google 스프레드시트 ID
-const SHEET_ID = '1mQFhQA3YokfaG0_kj4HleNC08s4pa6ZJ1QYR1Cb9FQo';
+// 스프레드시트 ID
+const SHEET_ID = '1mQFhQA3YokfaG0_kj4HleNC08s4pa6ZJ1QYR1Cb9FQo'; // Google 스프레드시트 ID 입력
 
 // POST API 엔드포인트
 app.post('/recordWorkHours', async (req, res) => {
@@ -38,7 +36,7 @@ app.post('/recordWorkHours', async (req, res) => {
         // Google Sheets에 데이터 추가
         await sheets.spreadsheets.values.append({
             spreadsheetId: SHEET_ID,
-            range: 'Sheet1!A:D', // 올바른 범위 지정
+            range: 'Sheet1!A1',
             valueInputOption: 'USER_ENTERED',
             requestBody: {
                 values: [[name, startTime, endTime, workHours]],
