@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 
 // Render 환경에서 포트 설정
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware 설정
 app.use(cors());
