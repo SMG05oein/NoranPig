@@ -22,7 +22,6 @@ function renderCalendar() {
     daysOfWeek.forEach(day => {
         calendarHTML += `<th>${day}</th>`;
     });
-
     calendarHTML += '</tr></thead><tbody><tr>';
 
     // 첫 날 전까지 빈 칸 추가
