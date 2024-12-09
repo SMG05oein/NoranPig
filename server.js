@@ -4,15 +4,18 @@ const { google } = require('googleapis');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3000;
 
-// Middleware
+// Render 환경에서 포트 설정
+const PORT = process.env.PORT || 3000; // Render의 환경 변수를 우선 사용
+
+// Middleware 설정
 app.use(cors());
 app.use(bodyParser.json());
 
 // Google Sheets API 설정
 const credentials = require('./credentials.json');
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+
 const auth = new google.auth.GoogleAuth({
     keyFile: './credentials.json',
     scopes: SCOPES,
@@ -20,8 +23,8 @@ const auth = new google.auth.GoogleAuth({
 
 const sheets = google.sheets({ version: 'v4', auth });
 
-// 스프레드시트 ID
-const SHEET_ID = '1mQFhQA3YokfaG0_kj4HleNC08s4pa6ZJ1QYR1Cb9FQo'; // Google 스프레드시트 ID 입력
+// Google 스프레드시트 ID
+const SHEET_ID = '1mQFhQA3YokfaG0_kj4HleNC08s4pa6ZJ1QYR1Cb9FQo'; // 스프레드시트 ID 입력
 
 // POST API 엔드포인트
 app.post('/recordWorkHours', async (req, res) => {
