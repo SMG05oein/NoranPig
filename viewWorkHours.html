@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>노란돼지 고깃집 캘린더</title>
+    <link rel="stylesheet" href="style.css"> <!-- CSS 파일 연결 -->
+</head>
+<body>
+<div class="calendar-container">
+    <h2>노란돼지 고깃집 근무 캘린더</h2>
+
+    <!-- 월/년 표시 및 버튼들 -->
+    <div class="calendar-header">
+        <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+        <span id="monthYear" class="month-year"></span>
+        <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+    </div>
+
+    <!-- 캘린더 표 -->
+    <div id="calendar"></div>
+</div>
+
+<script src="calendar.js"></script> <!-- JavaScript 파일 연결 -->
+</body>
+</html>
